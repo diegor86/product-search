@@ -1,14 +1,19 @@
 package com.diegor.productsearch.ui.list
 
+import android.app.SearchManager
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import com.diegor.productsearch.R
-import com.diegor.productsearch.databinding.ActivityMainBinding
+import com.diegor.productsearch.databinding.ProductSearchActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
@@ -17,31 +22,50 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class ProductSearchActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ProductSearchActivityBinding
     private val adapter = ProductsAdapter()
     private val viewModel: ProductSearchViewModel by viewModels()
 
     private var searchJob: Job? = null
 
-    private fun search(query: String) {
-        // Make sure we cancel the previous job before creating a new one
-        searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            viewModel.searchProducts(query).collectLatest {
-                adapter.submitData(it)
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ProductSearchActivityBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
         initAdapter()
 
-        search("Motorola")
+        handleIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (Intent.ACTION_SEARCH == intent.action) {
+            val query = intent.getStringExtra(SearchManager.QUERY)
+            query?.let {
+                search(query)
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.search_menu, menu)
+
+
+        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        (menu.findItem(R.id.menu_search).actionView as SearchView).apply {
+
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            setIconifiedByDefault(false)
+        }
+
+        return true
     }
 
     private fun initAdapter() {
@@ -66,6 +90,15 @@ class ProductSearchActivity : AppCompatActivity() {
                 ).show()
             }
         }
+    }
 
+    private fun search(query: String) {
+        // Make sure we cancel the previous job before creating a new one
+        searchJob?.cancel()
+        searchJob = lifecycleScope.launch {
+            viewModel.searchProducts(query).collectLatest {
+                adapter.submitData(it)
+            }
+        }
     }
 }

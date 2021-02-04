@@ -9,5 +9,6 @@ import java.math.BigDecimal
 data class Product(
     @SerializedName("id") val id: String,
     @SerializedName("title") val title: String,
-    @SerializedName("price") val price: BigDecimal
+    @SerializedName("price") val price: BigDecimal,
+    @SerializedName("thumbnail") val thumbnail: String
 ) : Parcelable

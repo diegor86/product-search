@@ -2,4 +2,5 @@
     <string name="app_name">ProductSearch</string>
 
     <string name="retry">Reintentar</string>
+    <string name="search">Buscar</string>
 </resources>
