@@ -4,12 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.diegor.productsearch.data.ProductsRepository
 import com.diegor.productsearch.data.entities.Product
 import com.diegor.productsearch.util.CoroutinesDispatcherProvider
 import com.diegor.productsearch.util.result.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.diegor.productsearch.util.result.Result
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -54,6 +57,22 @@ class ProductSearchViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private var currentQueryValue: String? = null
+
+    private var currentSearchResult: Flow<PagingData<Product>>? = null
+
+    fun searchProducts(queryString: String): Flow<PagingData<Product>> {
+        val lastResult = currentSearchResult
+        if (queryString == currentQueryValue && lastResult != null) {
+            return lastResult
+        }
+        currentQueryValue = queryString
+        val newResult: Flow<PagingData<Product>> = repository.getSearchResultStream(queryString)
+            .cachedIn(viewModelScope)
+        currentSearchResult = newResult
+        return newResult
     }
 
 }

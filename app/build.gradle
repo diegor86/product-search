@@ -20,6 +20,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -75,4 +78,6 @@ dependencies {
     implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
     // When using Kotlin.
     kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha03'
+
+    implementation 'androidx.paging:paging-runtime-ktx:3.0.0-alpha13'
 }
