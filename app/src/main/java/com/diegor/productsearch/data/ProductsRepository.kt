@@ -5,6 +5,8 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.diegor.productsearch.data.ProductsPagingSource.Companion.NETWORK_PAGE_SIZE
 import com.diegor.productsearch.data.api.ProductsService
+import com.diegor.productsearch.data.entities.Description
+import com.diegor.productsearch.data.entities.Detail
 import com.diegor.productsearch.data.entities.Product
 import com.diegor.productsearch.util.result.Result
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +24,28 @@ class ProductsRepository @Inject constructor(
         if (response.isSuccessful) {
             response.body()?.let {
                 return Result.Success(it.results)
+            }
+        }
+        return Result.Error()
+    }
+
+    suspend fun getProductDetail(productId: String): Result<Detail> {
+        val response = service.getProductDetail(productId)
+
+        if (response.isSuccessful) {
+            response.body()?.let {
+                return Result.Success(it)
+            }
+        }
+        return Result.Error()
+    }
+
+    suspend fun getProductDescription(productId: String): Result<Description> {
+        val response = service.getProductDescription(productId)
+
+        if (response.isSuccessful) {
+            response.body()?.let {
+                return Result.Success(it)
             }
         }
         return Result.Error()

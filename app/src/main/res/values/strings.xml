@@ -3,4 +3,5 @@
 
     <string name="retry">Reintentar</string>
     <string name="search">Buscar</string>
+    <string name="image_selected">%1$d/%2$d</string>
 </resources>

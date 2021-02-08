@@ -11,7 +11,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.RecyclerView
 import com.diegor.productsearch.R
 import com.diegor.productsearch.databinding.ProductSearchActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,9 +68,6 @@ class ProductSearchActivity : AppCompatActivity() {
     }
 
     private fun initAdapter() {
-        findViewById<RecyclerView>(R.id.product_list).adapter = adapter
-
-
         binding.productList.adapter = adapter.withLoadStateHeaderAndFooter(
             header = LoadStateAdapter { adapter.retry() },
             footer = LoadStateAdapter { adapter.retry() }
@@ -93,7 +89,6 @@ class ProductSearchActivity : AppCompatActivity() {
     }
 
     private fun search(query: String) {
-        // Make sure we cancel the previous job before creating a new one
         searchJob?.cancel()
         searchJob = lifecycleScope.launch {
             viewModel.searchProducts(query).collectLatest {

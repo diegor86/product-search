@@ -1,11 +1,13 @@
 package com.diegor.productsearch.ui.list
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.diegor.productsearch.R
+import com.diegor.productsearch.ui.detail.ProductDetailActivity
 import com.facebook.drawee.view.SimpleDraweeView
 
 class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -17,10 +19,9 @@ class ProductViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
         view.setOnClickListener {
-            /*product?.url?.let { url ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                view.context.startActivity(intent)
-            }*/
+            product?.let {
+                view.context.startActivity(ProductDetailActivity.newIntent(view.context, it.id))
+            }
         }
     }
 
