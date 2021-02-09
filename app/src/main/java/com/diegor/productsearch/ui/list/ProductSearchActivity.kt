@@ -76,7 +76,6 @@ class ProductSearchActivity : AppCompatActivity() {
         adapter.addLoadStateListener { loadState ->
             binding.loading.isVisible = loadState.refresh is LoadState.Loading
 
-            // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error
                 ?: loadState.source.prepend as? LoadState.Error
                 ?: loadState.append as? LoadState.Error
@@ -84,7 +83,7 @@ class ProductSearchActivity : AppCompatActivity() {
             errorState?.let {
                 Toast.makeText(
                     this,
-                    "\uD83D\uDE28 Wooops ${it.error}",
+                    it.error.message,
                     Toast.LENGTH_LONG
                 ).show()
             }

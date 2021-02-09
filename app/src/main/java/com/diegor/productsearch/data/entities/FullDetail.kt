@@ -1,6 +1,6 @@
 package com.diegor.productsearch.data.entities
 
-class FullDetail (
+data class FullDetail (
     private val detail: Detail,
     private val _description: Description
 ) {

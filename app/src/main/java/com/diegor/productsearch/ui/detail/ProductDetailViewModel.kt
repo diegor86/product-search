@@ -1,5 +1,6 @@
 package com.diegor.productsearch.ui.detail
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -7,9 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.diegor.productsearch.data.entities.FullDetail
 import com.diegor.productsearch.domain.GetProductDetailUseCase
 import com.diegor.productsearch.util.CoroutinesDispatcherProvider
+import com.diegor.productsearch.util.asPrice
 import com.diegor.productsearch.util.result.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.diegor.productsearch.util.result.Result
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     private val getProductDetailUseCase: GetProductDetailUseCase,
-    private val dispatcherProvider: CoroutinesDispatcherProvider
+    private val dispatcherProvider: CoroutinesDispatcherProvider,
+    @ApplicationContext private val appContext: Context
 ): ViewModel() {
 
     private val _product = MutableLiveData<ProductDetailUiModel>()
@@ -58,12 +62,12 @@ class ProductDetailViewModel @Inject constructor(
     }
 
     private fun emitDetail(fullDetail: FullDetail) {
-        val uiModel = ProductDetailUiModel(fullDetail.title, fullDetail.pictures.map { it.secureUrl }, fullDetail.description, fullDetail.price.toString())
+        val uiModel = ProductDetailUiModel(fullDetail.title, fullDetail.pictures.map { it.secureUrl }, fullDetail.description, fullDetail.price.asPrice(appContext))
         _product.value = uiModel
     }
 }
 
-class ProductDetailUiModel(
+data class ProductDetailUiModel(
     val title: String,
     val images: List<String>,
     val description: String,
