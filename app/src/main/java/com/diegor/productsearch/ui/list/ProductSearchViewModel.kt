@@ -27,42 +27,6 @@ class ProductSearchViewModel @Inject constructor(
     private val dispatcherProvider: CoroutinesDispatcherProvider
 ): ViewModel() {
 
-    private val _products = MutableLiveData<List<Product>>()
-    val products: LiveData<List<Product>>
-        get() = _products
-
-    private val _errors = MutableLiveData<Event<String>>()
-    val errors: LiveData<Event<String>>
-        get() = _errors
-
-    private val _loading = MutableLiveData<Boolean>()
-    val loading: LiveData<Boolean>
-        get() = _loading
-
-    fun getProducts(query: String) = viewModelScope.launch(dispatcherProvider.computation) {
-        val result = repository.getProducts(query)
-
-        when (result) {
-            is Result.Loading -> {
-                withContext(dispatcherProvider.main) {
-                    _loading.value = true
-                }
-            }
-            is Result.Success -> {
-                withContext(dispatcherProvider.main) {
-                    _loading.value = false
-                    _products.value = result.data
-                }
-            }
-            is Result.Error -> {
-                withContext(dispatcherProvider.main) {
-                    _loading.value = false
-                    _errors.value = Event(result.exception.toString())
-                }
-            }
-        }
-    }
-
     private var currentQueryValue: String? = null
 
     private var currentSearchResult: Flow<PagingData<ProductUiModel>>? = null

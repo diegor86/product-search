@@ -10,6 +10,8 @@ import com.diegor.productsearch.data.entities.Detail
 import com.diegor.productsearch.data.entities.Product
 import com.diegor.productsearch.util.result.Result
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
+import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,19 +20,13 @@ class ProductsRepository @Inject constructor(
     private val service: ProductsService,
     private val productsPagingSourceFactory: ProductsPagingSource.ProductsPagingSourceFactory
 ) {
-    suspend fun getProducts(query: String): Result<List<Product>> {
-        val response = service.getProducts(query)
-
-        if (response.isSuccessful) {
-            response.body()?.let {
-                return Result.Success(it.results)
-            }
-        }
-        return Result.Error()
-    }
 
     suspend fun getProductDetail(productId: String): Result<Detail> {
-        val response = service.getProductDetail(productId)
+        val response: Response<Detail> = try {
+            service.getProductDetail(productId)
+        } catch (exception: Exception) {
+            return Result.Error(exception)
+        }
 
         if (response.isSuccessful) {
             response.body()?.let {
@@ -41,7 +37,11 @@ class ProductsRepository @Inject constructor(
     }
 
     suspend fun getProductDescription(productId: String): Result<Description> {
-        val response = service.getProductDescription(productId)
+        val response: Response<Description> = try {
+            service.getProductDescription(productId)
+        } catch (exception: Exception) {
+            return Result.Error(exception)
+        }
 
         if (response.isSuccessful) {
             response.body()?.let {

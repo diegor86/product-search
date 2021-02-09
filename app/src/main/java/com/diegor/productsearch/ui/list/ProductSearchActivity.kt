@@ -9,6 +9,7 @@ import android.view.Menu
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.diegor.productsearch.R
@@ -73,6 +74,8 @@ class ProductSearchActivity : AppCompatActivity() {
             footer = LoadStateAdapter { adapter.retry() }
         )
         adapter.addLoadStateListener { loadState ->
+            binding.loading.isVisible = loadState.refresh is LoadState.Loading
+
             // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
             val errorState = loadState.source.append as? LoadState.Error
                 ?: loadState.source.prepend as? LoadState.Error

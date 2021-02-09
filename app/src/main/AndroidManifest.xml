@@ -13,7 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProductSearch"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ui.detail.ProductDetailActivity"></activity>
+
+        <activity
+            android:name=".ui.detail.ProductDetailActivity"
+            android:label="@string/product_detail" />
+
         <activity
             android:name=".ui.list.ProductSearchActivity"
             android:launchMode="singleTop">

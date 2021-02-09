@@ -43,6 +43,7 @@ class ProductDetailViewModel @Inject constructor(
                 }
                 is Result.Success -> {
                     withContext(dispatcherProvider.main) {
+                        _loading.value = false
                         emitDetail(result.data)
                     }
                 }

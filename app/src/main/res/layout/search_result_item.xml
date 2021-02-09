@@ -20,8 +20,6 @@
             android:id="@+id/product_thumbnail"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            fresco:placeholderImage="@drawable/image_placeholder"
-            fresco:failureImage="@drawable/image_error"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
 
