@@ -27,11 +27,13 @@ import javax.inject.Inject
 @HiltViewModel
 class ProductSearchViewModel @Inject constructor(
     private val repository: ProductsRepository,
-    private val dispatcherProvider: CoroutinesDispatcherProvider,
     @ApplicationContext private val appContext: Context
 ): ViewModel() {
 
     private var currentQueryValue: String? = null
+
+    val lastQueried
+        get() = currentQueryValue
 
     private var currentSearchResult: Flow<PagingData<ProductUiModel>>? = null
 

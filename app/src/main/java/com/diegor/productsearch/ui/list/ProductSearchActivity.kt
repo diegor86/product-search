@@ -36,7 +36,7 @@ class ProductSearchActivity : AppCompatActivity() {
 
         initAdapter()
 
-        handleIntent(intent)
+        handleIntent(intent, savedInstanceState?.getString(LAST_SEARCH_QUERY))
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -44,13 +44,19 @@ class ProductSearchActivity : AppCompatActivity() {
         handleIntent(intent)
     }
 
-    private fun handleIntent(intent: Intent) {
-        if (Intent.ACTION_SEARCH == intent.action) {
-            val query = intent.getStringExtra(SearchManager.QUERY)
-            query?.let {
-                search(query)
-            }
+    private fun handleIntent(intent: Intent, lastQueried: String? = null) {
+        val query = if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)
+        } else {
+            lastQueried
         }
+
+        search(query)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(LAST_SEARCH_QUERY, viewModel.lastQueried)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -90,12 +96,18 @@ class ProductSearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun search(query: String) {
-        searchJob?.cancel()
-        searchJob = lifecycleScope.launch {
-            viewModel.searchProducts(query).collectLatest {
-                adapter.submitData(it)
+    private fun search(query: String?) {
+        if (!query.isNullOrEmpty()) {
+            searchJob?.cancel()
+            searchJob = lifecycleScope.launch {
+                viewModel.searchProducts(query).collectLatest {
+                    adapter.submitData(it)
+                }
             }
         }
+    }
+
+    companion object {
+        private const val LAST_SEARCH_QUERY: String = "last_search_query"
     }
 }

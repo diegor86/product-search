@@ -20,16 +20,6 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private val viewModel: ProductDetailViewModel by viewModels()
 
-    private val errorObserver = EventObserver<String> { error ->
-        Toast.makeText(this, error, Toast.LENGTH_LONG).show()
-    }
-
-    private val loadingObserver = Observer<Boolean> {
-        val loading = it ?: return@Observer
-
-        binding.loading.isVisible = loading
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,8 +31,16 @@ class ProductDetailActivity : AppCompatActivity() {
             product?.let { showProductData(it) }
         })
 
-        viewModel.loading.observe(this, loadingObserver)
-        viewModel.errors.observe(this, errorObserver)
+        viewModel.loading.observe(this,
+            Observer<Boolean> {
+                val loading = it ?: return@Observer
+                binding.loading.isVisible = loading
+            })
+
+        viewModel.errors.observe(this,
+            EventObserver { error ->
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+            })
 
         intent.getStringExtra(PRODUCT_ID_EXTRA)?.let {
             viewModel.getProductDetail(it)
